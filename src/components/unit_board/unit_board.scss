@@ -1,0 +1,6 @@
+@import '../../styles/variables.scss';
+
+.unit-board-wrapper {
+    display: inline-block;
+    border: $thickBorder solid $blackColor;
+}

@@ -1,11 +1,10 @@
 import React from 'react';
-import Hole from './components/hole/hole';
+import Board from './components/board/board';
+import './styles/general.scss';
 
 function App() {
   return (
-    // <div>
-      <Hole />
-    // </div>
+    <Board />
   );
     
 }
