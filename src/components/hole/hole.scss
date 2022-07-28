@@ -1,0 +1,16 @@
+@import "../../styles/variables.scss";
+
+.hole {
+    display: inline-block;
+    width: $bigHoleSize;
+    height: $bigHoleSize;
+    background-color: $pinkColor;
+    border: $thinBorder solid $brownColor;
+}
+
+@media screen and (max-width: $smallScreenWidth) {
+    .hole {
+        width: $smallHoleSize;
+        height: $smallHoleSize;
+    }
+}

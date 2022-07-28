@@ -1,0 +1,14 @@
+.hole {
+  display: inline-block;
+  background-color: #FA13AD;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #2FEEBC;
+}
+
+@media screen and (max-width: 300px) {
+  .hole {
+    width: 30px;
+    height: 30px;
+  }
+}/*# sourceMappingURL=hole.css.map */
