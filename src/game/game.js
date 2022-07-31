@@ -7,9 +7,9 @@ import './game.scss';
 
 function GameBoard({ size }) {
   return (
-    <div className='board-wrapper'>
+    <div className='game-board-wrapper'>
       <Board size={ size }>
-        <Board size={ size }>
+        <Board className='game-board' size={ size }>
           <Hole />
         </Board>
       </Board>
@@ -22,7 +22,9 @@ function Game() {
   const boardSize = appConfig["game"]["unit-board-size"];
 
   return (
-    <GameBoard size={ boardSize } />
+    <div className='game-wrapper'>
+      <GameBoard size={ boardSize } />
+    </div>
   );
 }
 
