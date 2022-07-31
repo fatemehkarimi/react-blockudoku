@@ -1,5 +1,6 @@
 @import "../../styles/variables.scss";
 
 .board {
-    display: inline-block;
+    display: inline-grid;
+    border: $thinBorder solid $blackColor;
 }

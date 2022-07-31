@@ -1,23 +1,17 @@
-import React from 'react';
-import Row from '../row/row';
-import UnitBoard from '../unit_board/unit_board';
+import React, { useState } from 'react';
 import "./board.scss";
-import appConfig from '../../config/config.json';
 
-function Board() {
-  const boardSize = appConfig["game"]["unit-board-size"];
+function Board(props) {
+  const [divStyle, setDivStyle] = useState({
+    gridTemplateColumns: `repeat(${ props.size }, 1fr)`,
+    gridTemplateRows: `repeat(${ props.size }, 1fr)`
+  });
 
   return (
-    <div className="board">
+    <div className="board" style={ divStyle }>
       {
-        [...Array(boardSize)].map(() => {
-          return (
-            <Row>
-              {
-                [...Array(boardSize)].map(() => <UnitBoard />)
-              }
-            </Row>
-          );
+        [...Array(props.size ** 2)].map(() => {
+          return <>{ props.children }</>
         })
       }
     </div>
