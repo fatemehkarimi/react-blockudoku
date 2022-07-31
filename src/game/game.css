@@ -1,0 +1,7 @@
+.board-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid blue;
+  padding: 1em;
+}/*# sourceMappingURL=game.css.map */

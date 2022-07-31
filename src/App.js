@@ -1,10 +1,10 @@
 import React from 'react';
-import Board from './components/board/board';
+import Game from './game/game';
 import './styles/general.scss';
 
 function App() {
   return (
-    <Board />
+    <Game />
   );
     
 }
