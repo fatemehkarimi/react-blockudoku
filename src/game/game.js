@@ -10,7 +10,7 @@ function GameBoard({ size }) {
     <div className='game-board-wrapper'>
       <Board size={ size }>
         <Board className='game-board' size={ size }>
-          <Hole />
+          <Hole className='game-board-hole' />
         </Board>
       </Board>
     </div>

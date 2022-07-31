@@ -1,9 +1,9 @@
 import React from 'react';
 import './hole.scss';
 
-function Hole() {
+function Hole(props) {
   return (
-    <div className="hole">
+    <div className={ `hole ${ props.className }` }>
     </div>
   );
 }

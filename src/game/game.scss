@@ -12,6 +12,11 @@
     border: $mediumborder solid $blackColor;
 }
 
+.game-board-hole {
+    background-color: $greyColor;
+    border: $thinBorder solid $whiteColor;
+}
+
 .game-wrapper {
     display: flex;
     flex-direction: column;

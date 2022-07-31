@@ -4,8 +4,6 @@
     display: inline-block;
     width: $bigHoleSize;
     height: $bigHoleSize;
-    background-color: $greyColor;
-    border: $thinBorder solid $whiteColor;
 }
 
 @media screen and (max-width: $smallScreenWidth) {
