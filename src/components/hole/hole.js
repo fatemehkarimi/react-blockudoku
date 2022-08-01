@@ -3,7 +3,7 @@ import './hole.scss';
 
 function Hole(props) {
   return (
-    <div className={ `hole ${ props.className }` }>
+    <div className={ `hole ${ props.className }` } style={ props.style }>
     </div>
   );
 }

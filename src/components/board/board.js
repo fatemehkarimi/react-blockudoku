@@ -8,9 +8,11 @@ function Board(props) {
   });
 
   return (
-    <div className={ `board ${ props.className }` } style={ divStyle }>
+    <div
+     className={ `board ${ props.className ? props.className : '' }` }
+     style={ divStyle }>
       {
-        [...Array(props.size ** 2)].map(() => {
+        [...Array(props.size ** 2).keys()].map((i) => {
           return <>{ props.children }</>
         })
       }

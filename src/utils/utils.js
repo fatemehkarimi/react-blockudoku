@@ -1,4 +1,4 @@
-function loadShapeDetails(details) {
+export function loadShapeDetails(details) {
     var result = {};
     
     result['row'] = details['data'].length;

@@ -4,12 +4,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid  blue;
+    border: 3px solid  blue;
     padding: 1em;
 }
 
 .game-board {
-    border: $mediumborder solid $blackColor;
+    border: $mediumBorder solid $blackColor;
 }
 
 .game-board-hole {
@@ -20,5 +20,6 @@
 .game-wrapper {
     display: flex;
     flex-direction: column;
-    border: 1px solid green;
+    padding: 6px;
+    border: 5px solid green;
 }

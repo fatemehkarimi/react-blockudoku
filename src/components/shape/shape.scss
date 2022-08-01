@@ -1,0 +1,15 @@
+@import '../../styles/variables.scss';
+
+.shape-wrapper {
+    display: inline-grid;
+}
+
+.filled-hole {
+    background-color: $pinkColor;
+    border: $mediumBorder solid $blackColor;
+}
+
+.empty-hole {
+    background-color: transparent;
+    border: $mediumBorder solid $blackColor;
+}
