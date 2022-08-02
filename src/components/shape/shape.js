@@ -14,23 +14,25 @@ function Shape({ details }) {
   }
 
   return (
-    <div className='shape-wrapper' style={ divStyle }>
-      {
-        [...Array(row).keys()].map((i) => {
-          return (
-            <>
-              {
-                [...Array(column).keys()].map((j) => {
-                  if(matrix[i][j] == 1)
-                    return <Hole key={ "" + i + j } className='filled-hole'/>
+    <div>
+      <div className='shape-wrapper' style={ divStyle }>
+        {
+          [...Array(row).keys()].map((i) => {
+            return (
+              <>
+                {
+                  [...Array(column).keys()].map((j) => {
+                    if(matrix[i][j] == 1)
+                      return <Hole key={ "" + i + j } className='filled-hole'/>
 
-                  return <Hole key={ "" + i + j } className='empty-hole' />
-                })
-              }
-            </>
-          )
-        })
-      }
+                    return <Hole key={ "" + i + j } className='empty-hole' />
+                  })
+                }
+              </>
+            )
+          })
+        }
+      </div>
     </div>
   );
 }
