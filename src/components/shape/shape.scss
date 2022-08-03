@@ -7,9 +7,13 @@
 .filled-hole {
     background-color: $pinkColor;
     border: $mediumBorder solid $blackColor;
+    margin-top: -$mediumBorder;
+    margin-left: -$mediumBorder;
 }
 
 .empty-hole {
     background-color: transparent;
-    border: $mediumBorder solid $blackColor;
+    border: $mediumBorder solid transparent;
+    margin-top: -$mediumBorder;
+    margin-left: -$mediumBorder;
 }

@@ -28,9 +28,9 @@ function Game() {
     <div className='game-wrapper'>
       <GameBoard size={ boardSize } />
       <div className='shape-holder'>
-          <Shape details={ loadShapeDetails(shapeDetails[7]) } />
+          <Shape details={ loadShapeDetails(shapeDetails[5]) } />
           <Shape details={ loadShapeDetails(shapeDetails[15]) } />
-          <Shape details={ loadShapeDetails(shapeDetails[24]) } />
+          <Shape details={ loadShapeDetails(shapeDetails[23]) } />
       </div>
     </div>
   );

@@ -22,10 +22,11 @@ function Shape({ details }) {
               <>
                 {
                   [...Array(column).keys()].map((j) => {
-                    if(matrix[i][j] == 1)
-                      return <Hole key={ "" + i + j } className='filled-hole'/>
-
-                    return <Hole key={ "" + i + j } className='empty-hole' />
+                    return <Hole key={ "" + i + j }
+                            className={ `${
+                              matrix[i][j] == 1
+                                ? 'filled-hole'
+                                : 'empty-hole' }` } />
                   })
                 }
               </>
