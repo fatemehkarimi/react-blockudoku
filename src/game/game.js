@@ -7,11 +7,27 @@ import shapeDetails from '../data/shape_details.json';
 import './game.scss';
 
 
+function getRandomShape() {
+  var idx = Math.floor(Math.random() * shapeDetails.length);
+  return shapeDetails[idx];
+}
+
+
 function Game() {
   const gameBoardRef = useRef(null);
+  const dragDropManager = useDragDropManager();
+  const monitor = dragDropManager.getMonitor();
+  const [boardBounding, setBoardBounding] = useState({});
+  const [shapes, setShapes] = useState([
+    loadShapeDetails(getRandomShape()),
+    loadShapeDetails(getRandomShape()),
+    loadShapeDetails(getRandomShape())
+  ]);
 
   const getPosition = () => {
-    console.log(gameBoardRef.current.getBoundingClientRect());
+    setBoardBounding(
+      gameBoardRef.current.getBoundingClientRect()
+    );
   };
 
   useEffect(() => {
@@ -25,9 +41,6 @@ function Game() {
       window.removeEventListener("resize", getPosition, true);
     };
   }, []);
-
-  const dragDropManager = useDragDropManager();
-  const monitor = dragDropManager.getMonitor();
 
   useEffect(() => monitor.subscribeToOffsetChange(() => {
     const offset = monitor.getClientOffset();
@@ -48,9 +61,11 @@ function Game() {
     <div className='game-wrapper'>
       <GameBoard ref={ gameBoardRef } />
       <div className='shape-holder'>
-          <Shape id={ 1 } details={ loadShapeDetails(shapeDetails[5]) } />
-          <Shape id={ 2 } details={ loadShapeDetails(shapeDetails[15]) } />
-          <Shape id={ 3 } details={ loadShapeDetails(shapeDetails[23]) } />
+        {
+          [...Array(3).keys()].map((idx) => {
+            return <Shape id={ idx } details={ shapes[idx] } />
+          })
+        }
       </div>
     </div>
   );

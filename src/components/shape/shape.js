@@ -3,7 +3,7 @@ import { useDrag } from 'react-dnd';
 import Hole from '../hole/hole';
 import './shape.scss';
 
-function Shape({ id, details }) {
+function Shape({ id, details }, ref) {
   const [{ isDragging }, dragElement] = useDrag(() => ({
     type: "shape",
     item: {id: id},
@@ -24,7 +24,7 @@ function Shape({ id, details }) {
 
   return (
     <div ref={ dragElement }>
-      <div className='shape-wrapper' style={ divStyle }>
+      <div ref={ ref } className='shape-wrapper' style={ divStyle }>
         {
           [...Array(row).keys()].map((i) => {
             return (
@@ -47,4 +47,4 @@ function Shape({ id, details }) {
   );
 }
 
-export default Shape;
+export default React.forwardRef(Shape);
