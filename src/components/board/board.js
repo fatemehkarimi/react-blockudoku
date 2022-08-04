@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./board.scss";
 
-function Board(props) {
+function Board(props, ref) {
   const [divStyle, setDivStyle] = useState({
     gridTemplateColumns: `repeat(${ props.size }, 1fr)`,
     gridTemplateRows: `repeat(${ props.size }, 1fr)`
@@ -9,6 +9,7 @@ function Board(props) {
 
   return (
     <div
+     ref={ ref }
      className={ `board ${ props.className ? props.className : '' }` }
      style={ divStyle }>
       {
@@ -20,4 +21,4 @@ function Board(props) {
   );
 }
 
-export default Board;
+export default React.forwardRef(Board);

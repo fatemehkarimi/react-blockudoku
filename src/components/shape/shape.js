@@ -1,8 +1,17 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
 import Hole from '../hole/hole';
 import './shape.scss';
 
-function Shape({ details }) {
+function Shape({ id, details }) {
+  const [{ isDragging }, dragElement] = useDrag(() => ({
+    type: "shape",
+    item: {id: id},
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    })
+  }));
+
   const row = details['row'];
   const column = details['column'];
   const matrix = details['matrix'];
@@ -14,7 +23,7 @@ function Shape({ details }) {
   }
 
   return (
-    <div>
+    <div ref={ dragElement }>
       <div className='shape-wrapper' style={ divStyle }>
         {
           [...Array(row).keys()].map((i) => {

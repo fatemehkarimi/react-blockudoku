@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDragDropManager, useDrop } from 'react-dnd';
 import Hole from '../components/hole/hole';
 import Board from '../components/board/board';
 import Shape from '../components/shape/shape';
@@ -8,10 +9,29 @@ import shapeDetails from '../data/shape_details.json';
 import './game.scss';
 
 
-function GameBoard({ size }) {
+function GameBoard() {
+  const size = appConfig["game"]["unit-board-size"];
+  const gameBoardRef = useRef(null);
+
+  const getPosition = () => {
+    console.log(gameBoardRef.current.getBoundingClientRect());
+  };
+
+  useEffect(() => {
+    getPosition();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", getPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", getPosition, true);
+    };
+  }, []);
+
   return (
     <div className='game-board-wrapper'>
-      <Board size={ size }>
+      <Board ref={ gameBoardRef } size={ size }>
         <Board className='game-board' size={ size }>
           <Hole className='game-board-hole' />
         </Board>
@@ -22,15 +42,37 @@ function GameBoard({ size }) {
 
 
 function Game() {
-  const boardSize = appConfig["game"]["unit-board-size"];
+  // const dragDropManager = useDragDropManager();
+  // const monitor = dragDropManager.getMonitor();
+
+  // useEffect(() => monitor.subscribeToOffsetChange(() => {
+  //   const offset = monitor.getClientOffset();
+  //   console.log(offset);
+
+  //   if(gameBoardRef.current) {
+  //     const x = dropElement.current.offsetLeft;
+  //     const y = dropElement.current.offsetTop;
+  //     console.log("x, y : ", x, y);
+  //   }
+  // }), [monitor]);
+
+  // const handleDrop = (id) => {}
+
+  // const [{isOver, offset}, dropElement] = useDrop(() => ({
+  //   accept: "shape",
+  //   drop: (item) => handleDrop(item.id),
+  //   collect: (monitor) => ({
+  //     isOver: !!monitor.isOver()
+  //   })
+  // }));
 
   return (
     <div className='game-wrapper'>
-      <GameBoard size={ boardSize } />
+      <GameBoard />
       <div className='shape-holder'>
-          <Shape details={ loadShapeDetails(shapeDetails[5]) } />
-          <Shape details={ loadShapeDetails(shapeDetails[15]) } />
-          <Shape details={ loadShapeDetails(shapeDetails[23]) } />
+          <Shape id={ 1 } details={ loadShapeDetails(shapeDetails[5]) } />
+          <Shape id={ 2 } details={ loadShapeDetails(shapeDetails[15]) } />
+          <Shape id={ 3 } details={ loadShapeDetails(shapeDetails[23]) } />
       </div>
     </div>
   );
