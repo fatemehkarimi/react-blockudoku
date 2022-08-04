@@ -7,23 +7,6 @@
     border: 5px solid green;
 }
 
-.game-board-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 3px solid  blue;
-    padding: 1em;
-}
-
-.game-board {
-    border: $mediumBorder solid $blackColor;
-}
-
-.game-board-hole {
-    background-color: $greyColor;
-    border: $thinBorder solid $whiteColor;
-}
-
 .shape-holder {
     padding: 3%;
     display: flex;
