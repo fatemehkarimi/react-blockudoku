@@ -22,5 +22,5 @@ export const useComponentBoundingRect = (componentRef) => {
     getPosition();
   }, []);
 
-  return { boundingRect };
+  return [ boundingRect ];
 }
