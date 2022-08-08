@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import Hole from '../hole/hole';
 import './shape.scss';
 
-function Shape({ id, details }, ref) {
+function Shape({ id, details, onDrag }, ref) {
   const [{ isDragging }, dragElement] = useDrag(() => ({
     type: "shape",
     item: {id: id},
@@ -11,6 +11,10 @@ function Shape({ id, details }, ref) {
       isDragging: !!monitor.isDragging(),
     })
   }));
+
+  useEffect(() => {
+    onDrag(id);
+  }, [isDragging])
 
   const row = details['row'];
   const column = details['column'];
