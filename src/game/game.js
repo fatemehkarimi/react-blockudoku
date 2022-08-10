@@ -35,6 +35,31 @@ function createNewShapeListWithDetails(size) {
   return result;
 }
 
+function getShapeIndex(shapeDetail, boundingRect, holdingPosition) {
+  var top = boundingRect.top;
+  var left = boundingRect.left;
+
+  var width = boundingRect.width;
+  var height = boundingRect.height;
+
+  var offset_x = holdingPosition.x - left;
+  var offset_y = holdingPosition.y - top;
+
+  var singleHoleWidth = width / shapeDetail.column;
+  var singleHoleHeight = height / shapeDetail.row;
+
+  var row, col;
+  if(offset_x >= 0 && offset_x <= width
+      && offset_y >= 0 && offset_y <= height) {
+    var col = Math.floor(offset_x / singleHoleHeight);
+    var row = Math.floor(offset_y / singleHoleWidth);
+  }
+  return {
+    "i": row,
+    "j": col
+  };
+}
+
 
 function Game() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
@@ -57,7 +82,6 @@ function Game() {
 
 
   const handleDrop = (id) => {
-    console.log("id = ", id);
     setCurrentDraggingShapeId(null);
   }
 
@@ -71,6 +95,15 @@ function Game() {
   }));
 
   useEffect(() => {
+    if(currentDraggingShapeId == null)
+      return;
+
+      var boundingRect = shapeSizes.current[currentDraggingShapeId];
+      const {shape_i: i, shape_j: j} = getShapeIndex(
+        shapeList[currentDraggingShapeId],
+        boundingRect,
+        initialClientOffset);
+
   }, [currentDraggingShapeId]);
 
   const getElementBoundingRect = useCallback((id, el) => {

@@ -13,7 +13,10 @@ function Shape({ id, details, onDrag }, ref) {
   }));
 
   useEffect(() => {
-    onDrag(id);
+    if(isDragging)
+      onDrag(id);
+    else
+      onDrag(null);
   }, [isDragging])
 
   const row = details['row'];
