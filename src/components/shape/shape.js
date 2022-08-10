@@ -24,14 +24,14 @@ function Shape({ id, details, onDrag }, ref) {
   const matrix = details['matrix'];
   const rotate = details['rotate'];
 
-  const divStyle = {
+  const gridStyle = {
     gridTemplateColumns: `repeat(${ column }, 1fr)`,
     gridTemplateRows: `repeat(${ row }, 1fr)`
   }
 
   return (
-    <div ref={ dragElement }>
-      <div ref={ ref } className='shape-wrapper' style={ divStyle }>
+    <div ref={ dragElement } style={ { opacity: isDragging ? 0 : 1 } }>
+      <div ref={ ref } className='shape-wrapper' style={ gridStyle }>
         {
           [...Array(row).keys()].map((i) => {
             return (
