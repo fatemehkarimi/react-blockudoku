@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDragDropManager, useDrop } from 'react-dnd';
+import { useComponentBoundingRect } from '../hooks/useComponentBoundingRect';
 import Shape from '../components/shape/shape';
 import GameBoard from './game_board/gameBoard';
 import { loadShapeDetails } from '../utils/utils';
@@ -38,45 +39,22 @@ function createNewShapeListWithDetails(size) {
 function Game() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
 
+  const [currentDraggingShapeId, setCurrentDraggingShapeId] = useState(null);
+  const [shapeList, setShapeList] = useState(
+    createNewShapeListWithDetails(numShapesOnBoard));
+
   const gameBoardRef = useRef(null);
+
+  const [boardBoundingRect] = useComponentBoundingRect(gameBoardRef);
+  const shapeSizes = useRef([...Array(numShapesOnBoard)]);
+
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();
-
-  const [boardBounding, setBoardBounding] = useState({});
-  const [shapeBounding, setShapeBounding] = useState({});
-  const [currentDraggingShapeId, setCurrentDraggingShapeId] = useState(null);
-
-  const [shapes, setShapes] = useState(
-      createNewShapeListWithDetails(numShapesOnBoard));
-
-  const getPosition = () => {
-    setBoardBounding(
-      gameBoardRef.current.getBoundingClientRect()
-    );
-  };
-
-  useEffect(() => {
-    getPosition();
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("resize", getPosition, true);
-
-    return () => {
-      window.removeEventListener("resize", getPosition, true);
-    };
-  }, []);
-
+  
   useEffect(() => monitor.subscribeToOffsetChange(() => {
     const offset = monitor.getClientOffset();
   }), [monitor]);
 
-  useEffect(() => {
-    if(!currentDraggingShapeId)
-      return;
-
-    
-  }, [currentDraggingShapeId]);
 
   const handleDrop = (id) => {
     console.log("id = ", id);
@@ -92,16 +70,25 @@ function Game() {
     })
   }));
 
+  useEffect(() => {
+  }, [currentDraggingShapeId]);
+
+  const getElementBoundingRect = useCallback((id, el) => {
+    if(el)
+      shapeSizes.current[id] = el.getBoundingClientRect();
+  }, []);
+
   return (
     <div className='game-wrapper'>
       <GameBoard ref={ gameBoardRef } />
       <div className='shape-holder'>
         {
-          [...Array(3).keys()].map((idx) => {
+          [...shapeList.keys()].map((idx) => {
             return <Shape
                     id={ idx }
+                    ref={ (el) => getElementBoundingRect(idx, el) }
                     onDrag={ setCurrentDraggingShapeId }
-                    details={ shapes[idx] } />
+                    details={ shapeList[idx] } />
           })
         }
       </div>

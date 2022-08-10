@@ -4,6 +4,9 @@ export const useComponentBoundingRect = (componentRef) => {
   const [boundingRect, setBoundingRect] = useState();
 
   const getPosition = () => {
+    if(!componentRef.current)
+      return;
+
     setBoundingRect(
       componentRef.current.getBoundingClientRect()
     );
