@@ -37,11 +37,7 @@ function createNewShapeListWithDetails(size) {
 }
 
 function getShapeIndex(shapeDetail, boundingRect, holdingPosition) {
-  var top = boundingRect.top;
-  var left = boundingRect.left;
-
-  var width = boundingRect.width;
-  var height = boundingRect.height;
+  var { top, left, width, height } = boundingRect;
 
   var offset_x = holdingPosition.x - left;
   var offset_y = holdingPosition.y - top;
@@ -100,11 +96,10 @@ function Game() {
       return;
 
       var boundingRect = shapeSizes.current[currentDraggingShapeId];
-      const {i, j} = getShapeIndex(
+      const { i: shape_i, j: shape_j } = getShapeIndex(
         shapeList[currentDraggingShapeId],
         boundingRect,
         initialClientOffset);
-
   }, [currentDraggingShapeId]);
 
   const getElementBoundingRect = useCallback((id, el) => {
