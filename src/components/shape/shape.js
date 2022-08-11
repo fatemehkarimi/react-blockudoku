@@ -1,24 +1,9 @@
-import React, { useEffect } from 'react';
-import { useDrag } from 'react-dnd';
+import React from 'react';
 import Hole from '../hole/hole';
 import './shape.scss';
 
-function Shape({ id, details, onDrag }, ref) {
-  const [{ isDragging }, dragElement] = useDrag(() => ({
-    type: "shape",
-    item: {id: id},
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    })
-  }));
-
-  useEffect(() => {
-    if(isDragging)
-      onDrag(id);
-    else
-      onDrag(null);
-  }, [isDragging])
-
+function Shape(props, ref) {
+  const details = props.details;
   const row = details['row'];
   const column = details['column'];
   const matrix = details['matrix'];
@@ -30,26 +15,26 @@ function Shape({ id, details, onDrag }, ref) {
   }
 
   return (
-    <div ref={ dragElement } style={ { opacity: isDragging ? 0 : 1 } }>
-      <div ref={ ref } className='shape-wrapper' style={ gridStyle }>
-        {
-          [...Array(row).keys()].map((i) => {
-            return (
-              <>
-                {
-                  [...Array(column).keys()].map((j) => {
-                    return <Hole key={ "" + i + j }
-                            className={ `${
-                              matrix[i][j] == 1
-                                ? 'filled-hole'
-                                : 'empty-hole' }` } />
-                  })
-                }
-              </>
-            )
-          })
-        }
-      </div>
+    <div ref={ ref }
+      className='shape-wrapper'
+      style={ {...gridStyle, ...props.style} }>
+      {
+        [...Array(row).keys()].map((i) => {
+          return (
+            <>
+              {
+                [...Array(column).keys()].map((j) => {
+                  return <Hole key={ "" + i + j }
+                          className={ `${
+                            matrix[i][j] == 1
+                              ? 'filled-hole'
+                              : 'empty-hole' }` } />
+                })
+              }
+            </>
+          )
+        })
+      }
     </div>
   );
 }

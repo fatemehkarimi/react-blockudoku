@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDragDropManager, useDrop } from 'react-dnd';
 import { useComponentBoundingRect } from '../hooks/useComponentBoundingRect';
-import Shape from '../components/shape/shape';
+import DraggableShape from '../components/shape/draggableShape';
 import GameBoard from './game_board/gameBoard';
 import { loadShapeDetails } from '../utils/utils';
 import appConfig from '../config/config.json';
 import shapeDetails from '../data/shape_details.json';
 import './game.scss';
+import ShapeDragLayer from '../components/shape/shapeDragLayer';
 
 
 function getRandomShape() {
@@ -99,7 +100,7 @@ function Game() {
       return;
 
       var boundingRect = shapeSizes.current[currentDraggingShapeId];
-      const {shape_i: i, shape_j: j} = getShapeIndex(
+      const {i, j} = getShapeIndex(
         shapeList[currentDraggingShapeId],
         boundingRect,
         initialClientOffset);
@@ -115,13 +116,16 @@ function Game() {
     <div className='game-wrapper'>
       <GameBoard ref={ gameBoardRef } />
       <div className='shape-holder'>
+        <ShapeDragLayer details={ shapeList[currentDraggingShapeId] }/>
         {
           [...shapeList.keys()].map((idx) => {
-            return <Shape
-                    id={ idx }
-                    ref={ (el) => getElementBoundingRect(idx, el) }
-                    onDrag={ setCurrentDraggingShapeId }
-                    details={ shapeList[idx] } />
+            return (
+                <DraggableShape
+                  id={ idx }
+                  ref={ (el) => getElementBoundingRect(idx, el) }
+                  onDrag={ setCurrentDraggingShapeId }
+                  details={ shapeList[idx] } />
+            )
           })
         }
       </div>
