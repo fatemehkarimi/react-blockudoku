@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDragDropManager, useDrop } from 'react-dnd';
-import { useComponentBoundingRect } from '../hooks/useComponentBoundingRect';
 import DraggableShape from '../components/shape/draggableShape';
 import GameBoard from './game_board/gameBoard';
 import { loadShapeDetails } from '../utils/utils';
@@ -36,14 +35,14 @@ function createNewShapeListWithDetails(size) {
   return result;
 }
 
-function getShapeIndex(shapeDetail, boundingRect, holdingPosition) {
+function getIndexOnGrid(gridDetail, boundingRect, holdingPosition) {
   var { top, left, width, height } = boundingRect;
 
   var offset_x = holdingPosition.x - left;
   var offset_y = holdingPosition.y - top;
 
-  var singleHoleWidth = width / shapeDetail.column;
-  var singleHoleHeight = height / shapeDetail.row;
+  var singleHoleWidth = width / gridDetail.column;
+  var singleHoleHeight = height / gridDetail.row;
 
   var row, col;
   if(offset_x >= 0 && offset_x <= width
@@ -65,16 +64,22 @@ function Game() {
   const [shapeList, setShapeList] = useState(
     createNewShapeListWithDetails(numShapesOnBoard));
 
-  const gameBoardRef = useRef(null);
-
-  const [boardBoundingRect] = useComponentBoundingRect(gameBoardRef);
   const shapeSizes = useRef([...Array(numShapesOnBoard)]);
+  const gameBoardRef = useRef(null);
 
   const dragDropManager = useDragDropManager();
   const monitor = dragDropManager.getMonitor();
   
   useEffect(() => monitor.subscribeToOffsetChange(() => {
     const offset = monitor.getClientOffset();
+    if(!offset || !gameBoardRef.current)
+      return;
+
+    const {i: board_i, j: board_j} = getIndexOnGrid({
+        row: numShapesOnBoard ** 2,
+        column: numShapesOnBoard ** 2
+      }, gameBoardRef.current, offset);
+    
   }), [monitor]);
 
 
@@ -96,11 +101,16 @@ function Game() {
       return;
 
       var boundingRect = shapeSizes.current[currentDraggingShapeId];
-      const { i: shape_i, j: shape_j } = getShapeIndex(
+      const { i: shape_i, j: shape_j } = getIndexOnGrid(
         shapeList[currentDraggingShapeId],
         boundingRect,
         initialClientOffset);
   }, [currentDraggingShapeId]);
+
+  const getBoardBoundingRect = useCallback((el) => {
+    if(el)
+      gameBoardRef.current = el.getBoundingClientRect();
+  }, []);
 
   const getElementBoundingRect = useCallback((id, el) => {
     if(el)
@@ -109,7 +119,7 @@ function Game() {
 
   return (
     <div className='game-wrapper'>
-      <GameBoard ref={ gameBoardRef } />
+      <GameBoard ref={ (el) => getBoardBoundingRect(el) } />
       <div className='shape-holder'>
         <ShapeDragLayer details={ shapeList[currentDraggingShapeId] }/>
         {
