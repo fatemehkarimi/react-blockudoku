@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react'
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import Shape from "./shape";
 
 
 function DraggableShape({ id, details, onDrag }, ref) {
-  const [{ isDragging }, dragElement] = useDrag(() => ({
+  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: "shape",
     item: {id: id},
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     })
   }));
+
+  useEffect(() => {
+    dragPreview(getEmptyImage(), { captureDraggingState: true })
+  }, []);
 
   useEffect(() => {
     if(isDragging)
@@ -22,7 +27,7 @@ function DraggableShape({ id, details, onDrag }, ref) {
   const opacity = isDragging ? 0 : 1;
 
   return (
-    <div ref={ dragElement }>
+    <div ref={ drag }>
       <Shape ref={ ref } details={ details } style={ { opacity } } />
     </div>
   );
