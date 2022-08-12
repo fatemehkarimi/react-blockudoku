@@ -5,7 +5,7 @@ import GameBoard from './game_board/gameBoard';
 import { loadShapeDetails } from '../utils/utils';
 import appConfig from '../config/config.json';
 import shapeDetails from '../data/shape_details.json';
-import './game.scss';
+import './gameView.scss';
 import ShapeDragLayer from '../components/shape/shapeDragLayer';
 
 
@@ -57,7 +57,7 @@ function getIndexOnGrid(gridDetail, boundingRect, holdingPosition) {
 }
 
 
-function Game() {
+function GameView() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
 
   const [currentDraggingShapeId, setCurrentDraggingShapeId] = useState(null);
@@ -138,4 +138,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default GameView;
