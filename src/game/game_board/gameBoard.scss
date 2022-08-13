@@ -12,7 +12,17 @@
     border: $mediumBorder solid $blackColor;
 }
 
-.game-board-hole {
+.board-empty-hole {
     background-color: $greyColor;
+    border: $thinBorder solid $whiteColor;
+}
+
+.board-fill-hole {
+    background-color: $pinkColor;
+    border: $thinBorder solid $whiteColor;
+}
+
+.board-fillable-hole {
+    background-color: $darkGrayColor;
     border: $thinBorder solid $whiteColor;
 }

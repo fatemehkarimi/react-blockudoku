@@ -33,6 +33,20 @@ function createNewShapeListWithDetails(size) {
   return result;
 }
 
+function setShapeShadowOnBoard(boardMatrix, shape, i, j) {
+  var result = [];
+  for(var p = 0; p < boardMatrix.length; ++p)
+    result[p] = boardMatrix[p].slice();
+
+  const {row, column, matrix} = shape;
+  for(var tmp_i = 0; tmp_i < row; ++tmp_i)
+    for(var tmp_j = 0; tmp_j < column; ++tmp_j)
+      if(matrix[tmp_i][tmp_j] == FILL)
+        result[i + tmp_i][j + tmp_j] = FILLABLE;
+  
+  return result;
+}
+
 function GameController() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
   const boardSize = numShapesOnBoard ** 2;
@@ -44,11 +58,10 @@ function GameController() {
     Array(boardSize).fill(
       Array(boardSize).fill(EMPTY)));
 
+  const [matrixView, setMatrixView] = useState(boardMatrix);
+
   const checkFillPossible = (board_i, board_j, shapeId) => {
     const { row, column, matrix } = shapeList[shapeId];
-
-    console.log("initial = ", board_i, board_j);
-
     var canBeFilled = true;
     for(var i = 0; i < row; ++i)
       for(var j = 0; j < column; ++j)
@@ -67,16 +80,19 @@ function GameController() {
               break;
         }
       
-    console.log("canBeFilled = ", canBeFilled);
+    if(canBeFilled) {
+      var tmpMatrix = setShapeShadowOnBoard(
+        boardMatrix, shapeList[shapeId], board_i, board_j);
+      setMatrixView(tmpMatrix);
+    }
   }
 
   return (
     <div>
       <GameView
-        matrix={ boardMatrix }
+        matrix={ matrixView }
         shapeList={ shapeList }
         checkFillPossible={ checkFillPossible } />
-
     </div>
   );
 }

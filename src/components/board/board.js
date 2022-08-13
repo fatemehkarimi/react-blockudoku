@@ -12,11 +12,7 @@ function Board(props, ref) {
      ref={ ref }
      className={ `board ${ props.className ? props.className : '' }` }
      style={ divStyle }>
-      {
-        [...Array(props.size ** 2).keys()].map((i) => {
-          return <>{ props.children }</>
-        })
-      }
+      { props.children }
     </div>
   );
 }

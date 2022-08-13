@@ -98,7 +98,7 @@ function GameView({ matrix, shapeList, checkFillPossible }) {
 
   return (
     <div className='game-wrapper'>
-      <GameBoard ref={ (el) => getBoardBoundingRect(el) } />
+      <GameBoard matrix={ matrix } ref={ (el) => getBoardBoundingRect(el) } />
       <div className='shape-holder'>
         <ShapeDragLayer details={ shapeList[currentDraggingShapeId] }/>
         {
