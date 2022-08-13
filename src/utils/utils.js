@@ -8,3 +8,15 @@ export function loadShapeDetails(details) {
 
     return result;
 }
+
+export function getFirstFillable(shapeDetails) {
+    const { row, column, matrix } = shapeDetails;
+    var i, j;
+    for(var p = 0; p < row; ++p)
+        for(var q = 0; q < column; ++q)
+            if(matrix[p][q] == 1)
+                return {
+                    i: p,
+                    j: q
+                };
+}
