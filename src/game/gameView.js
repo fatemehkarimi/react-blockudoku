@@ -33,7 +33,7 @@ function getIndexOnGrid(gridDetail, boundingRect, holdingPosition) {
 }
 
 
-function GameView({ matrix, shapeList, checkFillPossible }) {
+function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
 
   const [currentDraggingShapeId, setCurrentDraggingShapeId] = useState(null);
@@ -52,7 +52,7 @@ function GameView({ matrix, shapeList, checkFillPossible }) {
       isOver: !!monitor.isOver(),
       initialClientOffset: monitor.getInitialClientOffset()
     })
-  }));
+  }), [currentDraggingShapeId, locationOnBoard]);
 
   useEffect(() => monitor.subscribeToOffsetChange(() => {
     const offset = monitor.getClientOffset();
@@ -66,11 +66,6 @@ function GameView({ matrix, shapeList, checkFillPossible }) {
 
     setLocationOnBoard(loc);
   }), [monitor]);
-
-  const handleDrop = (id) => {
-    setLocationOnBoard(null);
-    setCurrentDraggingShapeId(null);
-  }
 
   useEffect(() => {
     if(currentDraggingShapeId == null || locationOnBoard == null)
@@ -86,6 +81,27 @@ function GameView({ matrix, shapeList, checkFillPossible }) {
     checkFillPossible(i - shape_i, j - shape_j, currentDraggingShapeId);
   }, [locationOnBoard, currentDraggingShapeId]);
 
+
+  const handleDrop = (id) => {
+    if(locationOnBoard == null) {
+      setCurrentDraggingShapeId(null);
+      setLocationOnBoard(null);
+      return;
+    }
+
+    var boundingRect = shapeSizes.current[id];
+    const { i: shape_i, j: shape_j } = getIndexOnGrid(
+      shapeList[id],
+      boundingRect,
+      initialClientOffset);
+
+    const { i, j } = locationOnBoard;
+    notifyDrop(i - shape_i, j - shape_j, id);
+
+    setCurrentDraggingShapeId(null);
+    setLocationOnBoard(null);
+  }
+
   const getBoardBoundingRect = useCallback((el) => {
     if(el)
       gameBoardRef.current = el.getBoundingClientRect();
@@ -98,7 +114,10 @@ function GameView({ matrix, shapeList, checkFillPossible }) {
 
   return (
     <div className='game-wrapper'>
-      <GameBoard matrix={ matrix } ref={ (el) => getBoardBoundingRect(el) } />
+        <div className='game-view-board-wrapper'>
+          <GameBoard matrix={ matrix }
+            ref={ (el) => { getBoardBoundingRect(el); dropElement(el) } } />
+        </div>
       <div className='shape-holder'>
         <ShapeDragLayer details={ shapeList[currentDraggingShapeId] }/>
         {

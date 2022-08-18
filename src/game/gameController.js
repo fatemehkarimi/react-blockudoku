@@ -33,7 +33,7 @@ function createNewShapeListWithDetails(size) {
   return result;
 }
 
-function setShapeShadowOnBoard(boardMatrix, shape, i, j) {
+function fillBoard(boardMatrix, shape, i, j, status) {
   var result = [];
   for(var p = 0; p < boardMatrix.length; ++p)
     result[p] = boardMatrix[p].slice();
@@ -42,7 +42,7 @@ function setShapeShadowOnBoard(boardMatrix, shape, i, j) {
   for(var tmp_i = 0; tmp_i < row; ++tmp_i)
     for(var tmp_j = 0; tmp_j < column; ++tmp_j)
       if(matrix[tmp_i][tmp_j] == FILL)
-        result[i + tmp_i][j + tmp_j] = FILLABLE;
+        result[i + tmp_i][j + tmp_j] = status;
   
   return result;
 }
@@ -60,8 +60,9 @@ function GameController() {
 
   const [matrixView, setMatrixView] = useState(boardMatrix);
 
-  const checkFillPossible = (board_i, board_j, shapeId) => {
-    const { row, column, matrix } = shapeList[shapeId];
+
+  const isFillableOnBoard = (board_i, board_j, shapeDetails) => {
+    const { row, column, matrix } = shapeDetails;
     var canBeFilled = true;
     for(var i = 0; i < row; ++i)
       for(var j = 0; j < column; ++j)
@@ -76,15 +77,34 @@ function GameController() {
             }
             else
               canBeFilled = false;
+
             if(!canBeFilled)
               break;
         }
+    return canBeFilled;
+  }
+
+  const checkFillPossible = (board_i, board_j, shapeId) => {
+    var canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
       
     if(canBeFilled) {
-      var tmpMatrix = setShapeShadowOnBoard(
-        boardMatrix, shapeList[shapeId], board_i, board_j);
+      var tmpMatrix = fillBoard(
+        boardMatrix, shapeList[shapeId], board_i, board_j, FILLABLE);
       setMatrixView(tmpMatrix);
     }
+  }
+
+  const dropShape = (board_i, board_j, shapeId) => {
+    var canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
+
+    if(canBeFilled) {
+      var tmpMatrix = fillBoard(
+        boardMatrix, shapeList[shapeId], board_i, board_j, FILL);
+        setBoardMatrix(tmpMatrix);
+        setMatrixView(tmpMatrix);
+    }
+    else
+      setMatrixView(boardMatrix);
   }
 
   return (
@@ -92,7 +112,8 @@ function GameController() {
       <GameView
         matrix={ matrixView }
         shapeList={ shapeList }
-        checkFillPossible={ checkFillPossible } />
+        checkFillPossible={ checkFillPossible }
+        notifyDrop={ dropShape } />
     </div>
   );
 }

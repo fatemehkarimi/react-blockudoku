@@ -8,6 +8,14 @@
     max-height: 100wh;
 }
 
+.game-view-board-wrapper {
+    border: 3px dashed darkmagenta;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .shape-holder {
     padding: 3%;
     display: flex;
