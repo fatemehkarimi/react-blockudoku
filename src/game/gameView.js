@@ -68,8 +68,10 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
   }), [monitor]);
 
   useEffect(() => {
-    if(currentDraggingShapeId == null || locationOnBoard == null)
+    if(currentDraggingShapeId == null || locationOnBoard == null) {
+      checkFillPossible(null, null, null);
       return;
+    }
 
     var boundingRect = shapeSizes.current[currentDraggingShapeId];
     const { i: shape_i, j: shape_j } = getIndexOnGrid(
@@ -84,6 +86,7 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
 
   const handleDrop = (id) => {
     if(locationOnBoard == null) {
+      notifyDrop(null, null, null);
       setCurrentDraggingShapeId(null);
       setLocationOnBoard(null);
       return;

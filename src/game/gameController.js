@@ -85,23 +85,33 @@ function GameController() {
   }
 
   const checkFillPossible = (board_i, board_j, shapeId) => {
-    var canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
+    var canBeFilled;
+    if(board_i == null || board_j == null || shapeId == null)
+      canBeFilled = false;
+    else
+      canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
       
     if(canBeFilled) {
       var tmpMatrix = fillBoard(
         boardMatrix, shapeList[shapeId], board_i, board_j, FILLABLE);
       setMatrixView(tmpMatrix);
     }
+    else
+      setMatrixView(boardMatrix);
   }
 
   const dropShape = (board_i, board_j, shapeId) => {
-    var canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
+    var canBeFilled;
+    if(board_i == null || board_j == null || shapeId == null)
+      canBeFilled = false;
+    else
+      canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
 
     if(canBeFilled) {
       var tmpMatrix = fillBoard(
         boardMatrix, shapeList[shapeId], board_i, board_j, FILL);
-        setBoardMatrix(tmpMatrix);
-        setMatrixView(tmpMatrix);
+      setBoardMatrix(tmpMatrix);
+      setMatrixView(tmpMatrix);
     }
     else
       setMatrixView(boardMatrix);
