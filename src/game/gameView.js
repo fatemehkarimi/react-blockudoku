@@ -74,13 +74,20 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
     }
 
     var boundingRect = shapeSizes.current[currentDraggingShapeId];
-    const { i: shape_i, j: shape_j } = getIndexOnGrid(
+    var shapeLoc = getIndexOnGrid(
       shapeList[currentDraggingShapeId],
       boundingRect,
       initialClientOffset);
 
+    if(shapeLoc == null) {
+      checkFillPossible(null, null, null);
+      return;
+    }
+
+    const { i: shape_i, j: shape_j } = shapeLoc;
     const { i, j } = locationOnBoard;
-    checkFillPossible(i - shape_i, j - shape_j, currentDraggingShapeId);
+    checkFillPossible(i - shape_i, j - shape_j,
+                      shapeList[currentDraggingShapeId]["id"]);
   }, [locationOnBoard, currentDraggingShapeId]);
 
 
@@ -93,13 +100,21 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
     }
 
     var boundingRect = shapeSizes.current[id];
-    const { i: shape_i, j: shape_j } = getIndexOnGrid(
+    var shapeLoc = getIndexOnGrid(
       shapeList[id],
       boundingRect,
       initialClientOffset);
 
+    if(shapeLoc == null) {
+      notifyDrop(null, null, null);
+      setCurrentDraggingShapeId(null);
+      setLocationOnBoard(null);
+      return;      
+    }
+
+    const { i: shape_i, j: shape_j } = shapeLoc;
     const { i, j } = locationOnBoard;
-    notifyDrop(i - shape_i, j - shape_j, id);
+    notifyDrop(i - shape_i, j - shape_j, shapeList[id]["id"]);
 
     setCurrentDraggingShapeId(null);
     setLocationOnBoard(null);

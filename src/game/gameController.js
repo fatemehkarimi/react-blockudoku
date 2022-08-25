@@ -30,6 +30,10 @@ function getShapeListDetails(shapeList) {
 function createNewShapeListWithDetails(size) {
   var result = getRandomShapeList(size);
   result = getShapeListDetails(result);
+
+  for(var i = 0; i < size; ++i)
+    result[i]["id"] = i;
+
   return result;
 }
 
@@ -45,6 +49,20 @@ function fillBoard(boardMatrix, shape, i, j, status) {
         result[i + tmp_i][j + tmp_j] = status;
   
   return result;
+}
+
+function removeShapeFromShapeList(shapeList, shapeId) {
+  var result = [];
+  for(var shape of shapeList)
+    if(shape["id"] != shapeId)
+      result.push(shape);
+  return result;
+}
+
+function getShapeById(shapeList, shapeId) {
+  for(var shape of shapeList)
+    if(shape["id"] == shapeId)
+      return shape;
 }
 
 function GameController() {
@@ -89,11 +107,12 @@ function GameController() {
     if(board_i == null || board_j == null || shapeId == null)
       canBeFilled = false;
     else
-      canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
+      canBeFilled = isFillableOnBoard(
+        board_i, board_j, getShapeById(shapeList, shapeId));
       
     if(canBeFilled) {
       var tmpMatrix = fillBoard(
-        boardMatrix, shapeList[shapeId], board_i, board_j, FILLABLE);
+        boardMatrix, getShapeById(shapeList, shapeId), board_i, board_j, FILLABLE);
       setMatrixView(tmpMatrix);
     }
     else
@@ -105,13 +124,19 @@ function GameController() {
     if(board_i == null || board_j == null || shapeId == null)
       canBeFilled = false;
     else
-      canBeFilled = isFillableOnBoard(board_i, board_j, shapeList[shapeId]);
+      canBeFilled = isFillableOnBoard(
+        board_i, board_j, getShapeById(shapeList, shapeId));
 
     if(canBeFilled) {
       var tmpMatrix = fillBoard(
-        boardMatrix, shapeList[shapeId], board_i, board_j, FILL);
+        boardMatrix, getShapeById(shapeList, shapeId), board_i, board_j, FILL);
       setBoardMatrix(tmpMatrix);
       setMatrixView(tmpMatrix);
+
+      var newShapeList = removeShapeFromShapeList(shapeList, shapeId);
+      if(newShapeList.length == 0)
+        var newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
+      setShapeList(newShapeList);
     }
     else
       setMatrixView(boardMatrix);
