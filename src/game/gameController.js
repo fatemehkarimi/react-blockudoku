@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { EMPTY, FILLABLE, FILL } from '../constants';
 import { loadShapeDetails, getFirstFillable } from '../utils/utils';
+import { fillBoard, setBoardView } from '../features/scoring/scoringSlice';
 import GameView from './gameView';
 import appConfig from '../config/config.json';
 import shapeDetails from '../data/shape_details.json';
-import './gameController.scss';
 
 
 function getRandomShape() {
@@ -37,20 +38,6 @@ function createNewShapeListWithDetails(size) {
   return result;
 }
 
-function fillBoard(boardMatrix, shape, i, j, status) {
-  var result = [];
-  for(var p = 0; p < boardMatrix.length; ++p)
-    result[p] = boardMatrix[p].slice();
-
-  const {row, column, matrix} = shape;
-  for(var tmp_i = 0; tmp_i < row; ++tmp_i)
-    for(var tmp_j = 0; tmp_j < column; ++tmp_j)
-      if(matrix[tmp_i][tmp_j] == FILL)
-        result[i + tmp_i][j + tmp_j] = status;
-  
-  return result;
-}
-
 function removeShapeFromShapeList(shapeList, shapeId) {
   var result = [];
   for(var shape of shapeList)
@@ -67,87 +54,59 @@ function getShapeById(shapeList, shapeId) {
 
 function GameController() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
-  const boardSize = numShapesOnBoard ** 2;
-
+  const dispatch = useDispatch();
+  const board = useSelector((state) => state.score.board);
+  const boardView = useSelector((state) => state.score.boardView);
   const [shapeList, setShapeList] = useState(
     createNewShapeListWithDetails(numShapesOnBoard));
 
-  const [boardMatrix, setBoardMatrix] = useState(
-    Array(boardSize).fill(
-      Array(boardSize).fill(EMPTY)));
+  const handleFillBoardView = (i, j, shape_id) => {
+    if(i == null || j == null || shape_id == null)
+      return;
 
-  const [matrixView, setMatrixView] = useState(boardMatrix);
+    dispatch(setBoardView({
+      newBoard: board
+    }));
 
-
-  const isFillableOnBoard = (board_i, board_j, shapeDetails) => {
-    const { row, column, matrix } = shapeDetails;
-    var canBeFilled = true;
-    for(var i = 0; i < row; ++i)
-      for(var j = 0; j < column; ++j)
-        if(matrix[i][j] == FILL) {
-            var tmp_i = board_i + i;
-            var tmp_j = board_j + j;
-
-            if(tmp_i >=0 && tmp_i < boardSize
-              && tmp_j >= 0 && tmp_j < boardSize) {
-              if(boardMatrix[tmp_i][tmp_j] == FILL)
-                canBeFilled = false;
-            }
-            else
-              canBeFilled = false;
-
-            if(!canBeFilled)
-              break;
-        }
-    return canBeFilled;
+    dispatch(fillBoard({
+      board: 'view',
+      i,
+      j,
+      shape: getShapeById(shapeList, shape_id),
+      status: FILLABLE
+    }));
   }
 
-  const checkFillPossible = (board_i, board_j, shapeId) => {
-    var canBeFilled;
-    if(board_i == null || board_j == null || shapeId == null)
-      canBeFilled = false;
-    else
-      canBeFilled = isFillableOnBoard(
-        board_i, board_j, getShapeById(shapeList, shapeId));
-      
-    if(canBeFilled) {
-      var tmpMatrix = fillBoard(
-        boardMatrix, getShapeById(shapeList, shapeId), board_i, board_j, FILLABLE);
-      setMatrixView(tmpMatrix);
-    }
-    else
-      setMatrixView(boardMatrix);
+  const dropShape = (i, j, shapeId) => {
+    if(i == null || j == null || shapeId == null)
+      return;
+
+    dispatch(fillBoard({
+      board: 'main',
+      i,
+      j,
+      shape: getShapeById(shapeList, shapeId),
+      status: FILL
+    }));
+
+    var newShapeList = removeShapeFromShapeList(shapeList, shapeId);
+    if(newShapeList.length == 0)
+      var newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
+    setShapeList(newShapeList);
   }
 
-  const dropShape = (board_i, board_j, shapeId) => {
-    var canBeFilled;
-    if(board_i == null || board_j == null || shapeId == null)
-      canBeFilled = false;
-    else
-      canBeFilled = isFillableOnBoard(
-        board_i, board_j, getShapeById(shapeList, shapeId));
-
-    if(canBeFilled) {
-      var tmpMatrix = fillBoard(
-        boardMatrix, getShapeById(shapeList, shapeId), board_i, board_j, FILL);
-      setBoardMatrix(tmpMatrix);
-      setMatrixView(tmpMatrix);
-
-      var newShapeList = removeShapeFromShapeList(shapeList, shapeId);
-      if(newShapeList.length == 0)
-        var newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
-      setShapeList(newShapeList);
-    }
-    else
-      setMatrixView(boardMatrix);
-  }
+  useEffect(() => {
+    dispatch(setBoardView({
+      newBoard: board
+    }));
+  }, [board]);
 
   return (
     <div>
       <GameView
-        matrix={ matrixView }
+        matrix={ boardView }
+        checkFillPossible={ handleFillBoardView }
         shapeList={ shapeList }
-        checkFillPossible={ checkFillPossible }
         notifyDrop={ dropShape } />
     </div>
   );
