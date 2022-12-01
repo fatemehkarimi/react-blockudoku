@@ -19,8 +19,6 @@ const scoreSlice = createSlice({
   name: 'score',
   initialState: initialState,
   reducers: {
-    calcUserScore: (state, action) => {
-    },
     resetGame: (state, action) => {
       state.score = initialState.score;
       state.board = initBoard();
@@ -44,6 +42,9 @@ const scoreSlice = createSlice({
             board[idx_i][idx_j] = action.payload.status;
           }
     },
+    setScore: (state, action) => {
+      state.score = action.payload.score;
+    }
   }
 });
 
@@ -51,5 +52,6 @@ export const {
   calcUserScore,
   resetGame,
   setBoardView,
-  fillBoard } = scoreSlice.actions;
+  fillBoard,
+  setScore } = scoreSlice.actions;
 export default scoreSlice.reducer;

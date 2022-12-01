@@ -4,12 +4,10 @@
     padding: 2%;
     display: flex;
     flex-direction: column;
-    border: 5px solid green;
     max-height: 100wh;
 }
 
 .game-view-board-wrapper {
-    border: 3px dashed darkmagenta;
     padding: 10px;
     display: flex;
     justify-content: center;
@@ -17,9 +15,8 @@
 }
 
 .shape-holder {
-    padding: 3%;
+    padding: 30px;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    border: 5px solid red;
 }
