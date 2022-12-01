@@ -7,6 +7,7 @@ import GameView from './gameView';
 import appConfig from '../config/config.json';
 import shapeDetails from '../data/shape_details.json';
 
+const boardSize = appConfig["game"]["unit-board-size"] ** 2;
 
 function getRandomShape() {
   var idx = Math.floor(Math.random() * shapeDetails.length);
@@ -52,6 +53,29 @@ function getShapeById(shapeList, shapeId) {
       return shape;
 }
 
+function isFillableOnBoard(board, board_i, board_j, shapeDetails) {
+  const { row, column, matrix: shape } = shapeDetails;
+  var canBeFilled = true;
+  for(var i = 0; i < row; ++i)
+    for(var j = 0; j < column; ++j)
+      if(shape[i][j] == FILL) {
+          var tmp_i = board_i + i;
+          var tmp_j = board_j + j;
+
+          if(tmp_i >= 0 && tmp_i < boardSize
+            && tmp_j >= 0 && tmp_j < boardSize) {
+            if(board[tmp_i][tmp_j] == FILL)
+              canBeFilled = false;
+          }
+          else
+            canBeFilled = false;
+
+          if(!canBeFilled)
+            break;
+      }
+  return canBeFilled;
+}
+
 function GameController() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
   const dispatch = useDispatch();
@@ -60,25 +84,31 @@ function GameController() {
   const [shapeList, setShapeList] = useState(
     createNewShapeListWithDetails(numShapesOnBoard));
 
-  const handleFillBoardView = (i, j, shape_id) => {
-    if(i == null || j == null || shape_id == null)
+  const handleFillBoardView = (i, j, shapeId) => {
+    if(i == null || j == null || shapeId == null)
       return;
 
     dispatch(setBoardView({
       newBoard: board
     }));
 
+    if(!isFillableOnBoard(boardView, i, j, getShapeById(shapeList, shapeId)))
+      return;
+
     dispatch(fillBoard({
       board: 'view',
       i,
       j,
-      shape: getShapeById(shapeList, shape_id),
+      shape: getShapeById(shapeList, shapeId),
       status: FILLABLE
     }));
   }
 
   const dropShape = (i, j, shapeId) => {
     if(i == null || j == null || shapeId == null)
+      return;
+
+    if(!isFillableOnBoard(board, i, j, getShapeById(shapeList, shapeId)))
       return;
 
     dispatch(fillBoard({

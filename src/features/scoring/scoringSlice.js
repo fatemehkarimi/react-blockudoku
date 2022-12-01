@@ -9,29 +9,6 @@ function initBoard() {
           Array(boardSize).fill(EMPTY));
 }
 
-function isFillableOnBoard(board, board_i, board_j, shapeDetails) {
-  const { row, column, matrix: shape } = shapeDetails;
-  var canBeFilled = true;
-  for(var i = 0; i < row; ++i)
-    for(var j = 0; j < column; ++j)
-      if(shape[i][j] == FILL) {
-          var tmp_i = board_i + i;
-          var tmp_j = board_j + j;
-
-          if(tmp_i >= 0 && tmp_i < boardSize
-            && tmp_j >= 0 && tmp_j < boardSize) {
-            if(board[tmp_i][tmp_j] == FILL)
-              canBeFilled = false;
-          }
-          else
-            canBeFilled = false;
-
-          if(!canBeFilled)
-            break;
-      }
-  return canBeFilled;
-}
-
 const initialState = {
   score: 0,
   board: initBoard(),
@@ -59,20 +36,13 @@ const scoreSlice = createSlice({
       if(action.payload.board == 'view')
         board = state.boardView;
 
-      if(isFillableOnBoard(
-        state.board,
-        action.payload.i,
-        action.payload.j,
-        action.payload.shape))
-        {
-          for(var i = 0; i < row; ++i)
-            for(var j = 0; j < column; ++j)
-              if(shape[i][j] == FILL) {
-                var idx_i = action.payload.i + i;
-                var idx_j = action.payload.j + j;
-                board[idx_i][idx_j] = action.payload.status;
-              }
-        }
+      for(var i = 0; i < row; ++i)
+        for(var j = 0; j < column; ++j)
+          if(shape[i][j] == FILL) {
+            var idx_i = action.payload.i + i;
+            var idx_j = action.payload.j + j;
+            board[idx_i][idx_j] = action.payload.status;
+          }
     },
   }
 });
