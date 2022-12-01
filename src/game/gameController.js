@@ -85,7 +85,6 @@ function isFillableOnBoard(board, board_i, board_j, shapeDetails) {
 function GameController() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
   const dispatch = useDispatch();
-  const score = useSelector((state) => state.score.score);
   const board = useSelector((state) => state.score.board);
   const boardView = useSelector((state) => state.score.boardView);
   const [shapeList, setShapeList] = useState(
@@ -149,14 +148,11 @@ function GameController() {
   }, [board]);
 
   return (
-    <div>
-      <h1>{score}</h1>
-      <GameView
-        matrix={ boardView }
-        checkFillPossible={ handleFillBoardView }
-        shapeList={ shapeList }
-        notifyDrop={ dropShape } />
-    </div>
+    <GameView
+      matrix={ boardView }
+      checkFillPossible={ handleFillBoardView }
+      shapeList={ shapeList }
+      notifyDrop={ dropShape } />
   );
 }
 

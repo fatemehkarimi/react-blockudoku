@@ -3,6 +3,7 @@ import { useDragDropManager, useDrop } from 'react-dnd';
 import DraggableShape from '../components/shape/draggableShape';
 import ShapeDragLayer from '../components/shape/shapeDragLayer';
 import GameBoard from './game_board/gameBoard';
+import Scoreboard from './scoreboard';
 import appConfig from '../config/config.json';
 import './gameView.scss';
 
@@ -132,10 +133,11 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
 
   return (
     <div className='game-wrapper'>
-        <div className='game-view-board-wrapper'>
-          <GameBoard matrix={ matrix }
-            ref={ (el) => { getBoardBoundingRect(el); dropElement(el) } } />
-        </div>
+      <Scoreboard />
+      <div className='game-view-board-wrapper'>
+        <GameBoard matrix={ matrix }
+          ref={ (el) => { getBoardBoundingRect(el); dropElement(el) } } />
+      </div>
       <div className='shape-holder'>
         <ShapeDragLayer details={ shapeList[currentDraggingShapeId] }/>
         {

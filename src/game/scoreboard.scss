@@ -1,0 +1,21 @@
+.scoreboard-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.scoreboard-score-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.scoreboard-score-title {
+    margin-right: 5px;
+}
+
+.scoreboard-score-value {
+    font-weight: 800;
+}
