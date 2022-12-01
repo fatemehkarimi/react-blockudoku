@@ -13,6 +13,7 @@ import shapeDetails from '../data/shape_details.json';
 import { ScoreCalculator } from './scoreCalculator';
 
 const boardSize = appConfig["game"]["unit-board-size"] ** 2;
+const dropScore = appConfig["score"]["drop-score"];
 
 function getRandomShape() {
   var idx = Math.floor(Math.random() * shapeDetails.length);
@@ -125,6 +126,8 @@ function GameController() {
       status: FILL
     }));
 
+    dispatch(addScore({score: dropScore}));
+
     var newShapeList = removeShapeFromShapeList(shapeList, shapeId);
     if(newShapeList.length == 0)
       var newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
@@ -140,7 +143,7 @@ function GameController() {
     const newScore = scoreCalculator.calcScore();
     const newBoard = scoreCalculator.getNewBoard();
 
-    dispatch(addScore({score: score + newScore}));
+    dispatch(addScore({score: newScore}));
     if(!isBoardEquals(board, newBoard))
       dispatch(setBoard({newBoard: newBoard}));
   }, [board]);

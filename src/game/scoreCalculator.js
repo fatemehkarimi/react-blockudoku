@@ -73,11 +73,6 @@ export class ScoreCalculator {
     const filledCols = this.getFilledCols();
     const filledSquares = this.getFilledSquares();
 
-    console.log("filledRows = ", filledRows);
-    console.log("filledCols = ", filledCols);
-    console.log("filledSQus = ", filledSquares);
-    
-
     for(const idx of filledRows)
       this.clearRow(newBoard, idx);
 
