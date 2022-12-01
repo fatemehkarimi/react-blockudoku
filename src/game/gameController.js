@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { EMPTY, FILLABLE, FILL } from '../constants';
-import { loadShapeDetails, getFirstFillable } from '../utils/utils';
-import { fillBoard, setBoardView } from '../features/scoring/scoringSlice';
+import { FILLABLE, FILL } from '../constants';
+import { loadShapeDetails, isBoardEquals } from '../utils/utils';
+import {
+  fillBoardWithShape,
+  setBoard,
+  setBoardView, 
+  addScore} from '../features/scoring/scoringSlice';
 import GameView from './gameView';
 import appConfig from '../config/config.json';
 import shapeDetails from '../data/shape_details.json';
+import { ScoreCalculator } from './scoreCalculator';
 
 const boardSize = appConfig["game"]["unit-board-size"] ** 2;
 
@@ -79,6 +84,7 @@ function isFillableOnBoard(board, board_i, board_j, shapeDetails) {
 function GameController() {
   const numShapesOnBoard = appConfig["game"]["num-shapes-on-board"];
   const dispatch = useDispatch();
+  const score = useSelector((state) => state.score.score);
   const board = useSelector((state) => state.score.board);
   const boardView = useSelector((state) => state.score.boardView);
   const [shapeList, setShapeList] = useState(
@@ -95,7 +101,7 @@ function GameController() {
     if(!isFillableOnBoard(boardView, i, j, getShapeById(shapeList, shapeId)))
       return;
 
-    dispatch(fillBoard({
+    dispatch(fillBoardWithShape({
       board: 'view',
       i,
       j,
@@ -111,7 +117,7 @@ function GameController() {
     if(!isFillableOnBoard(board, i, j, getShapeById(shapeList, shapeId)))
       return;
 
-    dispatch(fillBoard({
+    dispatch(fillBoardWithShape({
       board: 'main',
       i,
       j,
@@ -129,10 +135,19 @@ function GameController() {
     dispatch(setBoardView({
       newBoard: board
     }));
+
+    const scoreCalculator = new ScoreCalculator(board);
+    const newScore = scoreCalculator.calcScore();
+    const newBoard = scoreCalculator.getNewBoard();
+
+    dispatch(addScore({score: score + newScore}));
+    if(!isBoardEquals(board, newBoard))
+      dispatch(setBoard({newBoard: newBoard}));
   }, [board]);
 
   return (
     <div>
+      <h1>{score}</h1>
       <GameView
         matrix={ boardView }
         checkFillPossible={ handleFillBoardView }

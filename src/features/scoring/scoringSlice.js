@@ -28,7 +28,11 @@ const scoreSlice = createSlice({
       for(var i = 0; i < state.boardView.length; i++)
         state.boardView[i] = action.payload.newBoard[i].slice();
     },
-    fillBoard: (state, action) => {
+    setBoard: (state, action) => {
+      for(var i = 0; i < state.board.length; i++)
+        state.board[i] = action.payload.newBoard[i].slice();
+    },
+    fillBoardWithShape: (state, action) => {
       const { row, column, matrix: shape } = action.payload.shape;
       var board = state.board;
       if(action.payload.board == 'view')
@@ -44,6 +48,9 @@ const scoreSlice = createSlice({
     },
     setScore: (state, action) => {
       state.score = action.payload.score;
+    },
+    addScore: (state, action) => {
+      state.score += action.payload.score;
     }
   }
 });
@@ -52,6 +59,7 @@ export const {
   calcUserScore,
   resetGame,
   setBoardView,
-  fillBoard,
-  setScore } = scoreSlice.actions;
+  setBoard,
+  fillBoardWithShape,
+  setScore, addScore } = scoreSlice.actions;
 export default scoreSlice.reducer;

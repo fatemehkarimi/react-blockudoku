@@ -2,5 +2,11 @@
     "game": {
         "unit-board-size": 3,
         "num-shapes-on-board": 3
+    },
+    "score": {
+        "col-fill-score": 10,
+        "row-fill-score": 10,
+        "square-fill-score": 10,
+        "drop-score": 3 
     }
 }
