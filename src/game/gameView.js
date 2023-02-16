@@ -169,6 +169,7 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
         {[...shapeList.keys()].map((idx) => {
           return (
             <DraggableShape
+              key={idx}
               id={idx}
               ref={(el) => getElementBoundingRect(idx, el)}
               onDrag={setCurrentDraggingShapeId}
