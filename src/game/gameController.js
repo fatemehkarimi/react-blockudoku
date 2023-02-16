@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { FILLABLE, FILL } from '../constants';
-import { loadShapeDetails, isBoardEquals } from '../utils/utils';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FILLABLE, FILL } from "../constants";
+import { loadShapeDetails, isBoardEquals } from "../utils/utils";
 import {
   fillBoardWithShape,
   setBoard,
-  setBoardView, 
-  addScore} from '../features/scoring/scoringSlice';
-import GameView from './gameView';
-import appConfig from '../config/config.json';
-import shapeDetails from '../data/shape_details.json';
-import { ScoreCalculator } from './scoreCalculator';
+  setBoardView,
+  addScore,
+} from "../features/scoring/scoringSlice";
+import GameView from "./gameView";
+import appConfig from "../config/config.json";
+import shapeDetails from "../data/shape_details.json";
+import GameOver from "../components/gameOver/gameOver";
+import { ScoreCalculator } from "./scoreCalculator";
 
 const boardSize = appConfig["game"]["unit-board-size"] ** 2;
 const dropScore = appConfig["score"]["drop-score"];
@@ -23,15 +25,13 @@ function getRandomShape() {
 function getRandomShapeList(size) {
   var result = [];
 
-  for(var i = 0; i < size; ++i)
-    result.push(getRandomShape());
+  for (var i = 0; i < size; ++i) result.push(getRandomShape());
   return result;
 }
 
 function getShapeListDetails(shapeList) {
   var result = [];
-  for(var shape of shapeList)
-    result.push(loadShapeDetails(shape));
+  for (var shape of shapeList) result.push(loadShapeDetails(shape));
   return result;
 }
 
@@ -39,47 +39,53 @@ function createNewShapeListWithDetails(size) {
   var result = getRandomShapeList(size);
   result = getShapeListDetails(result);
 
-  for(var i = 0; i < size; ++i)
-    result[i]["id"] = i;
+  for (var i = 0; i < size; ++i) result[i]["id"] = i;
 
   return result;
 }
 
 function removeShapeFromShapeList(shapeList, shapeId) {
   var result = [];
-  for(var shape of shapeList)
-    if(shape["id"] != shapeId)
-      result.push(shape);
+  for (const shape of shapeList) if (shape["id"] != shapeId) result.push(shape);
   return result;
 }
 
 function getShapeById(shapeList, shapeId) {
-  for(var shape of shapeList)
-    if(shape["id"] == shapeId)
-      return shape;
+  for (const shape of shapeList) if (shape["id"] == shapeId) return shape;
 }
 
 function isFillableOnBoard(board, board_i, board_j, shapeDetails) {
   const { row, column, matrix: shape } = shapeDetails;
   var canBeFilled = true;
-  for(var i = 0; i < row; ++i)
-    for(var j = 0; j < column; ++j)
-      if(shape[i][j] == FILL) {
-          var tmp_i = board_i + i;
-          var tmp_j = board_j + j;
+  for (var i = 0; i < row; ++i)
+    for (var j = 0; j < column; ++j)
+      if (shape[i][j] == FILL) {
+        var tmp_i = board_i + i;
+        var tmp_j = board_j + j;
 
-          if(tmp_i >= 0 && tmp_i < boardSize
-            && tmp_j >= 0 && tmp_j < boardSize) {
-            if(board[tmp_i][tmp_j] == FILL)
-              canBeFilled = false;
-          }
-          else
-            canBeFilled = false;
+        if (
+          tmp_i >= 0 &&
+          tmp_i < boardSize &&
+          tmp_j >= 0 &&
+          tmp_j < boardSize
+        ) {
+          if (board[tmp_i][tmp_j] == FILL) canBeFilled = false;
+        } else canBeFilled = false;
 
-          if(!canBeFilled)
-            break;
+        if (!canBeFilled) break;
       }
   return canBeFilled;
+}
+
+function isGameOver(board, shapeList) {
+  for (const shape of shapeList) {
+    for (let i = 0; i < boardSize; ++i)
+      for (let j = 0; j < boardSize; ++j)
+        if (isFillableOnBoard(board, i, j, shape)) {
+          return false;
+        }
+  }
+  return true;
 }
 
 function GameController() {
@@ -88,71 +94,88 @@ function GameController() {
   const board = useSelector((state) => state.score.board);
   const boardView = useSelector((state) => state.score.boardView);
   const [shapeList, setShapeList] = useState(
-    createNewShapeListWithDetails(numShapesOnBoard));
+    createNewShapeListWithDetails(numShapesOnBoard)
+  );
+  const [gameOver, setGameOver] = useState(false);
 
   const handleFillBoardView = (i, j, shapeId) => {
-    if(i == null || j == null || shapeId == null)
+    if (i == null || j == null || shapeId == null) return;
+
+    dispatch(
+      setBoardView({
+        newBoard: board,
+      })
+    );
+
+    if (!isFillableOnBoard(boardView, i, j, getShapeById(shapeList, shapeId)))
       return;
 
-    dispatch(setBoardView({
-      newBoard: board
-    }));
-
-    if(!isFillableOnBoard(boardView, i, j, getShapeById(shapeList, shapeId)))
-      return;
-
-    dispatch(fillBoardWithShape({
-      board: 'view',
-      i,
-      j,
-      shape: getShapeById(shapeList, shapeId),
-      status: FILLABLE
-    }));
-  }
+    dispatch(
+      fillBoardWithShape({
+        board: "view",
+        i,
+        j,
+        shape: getShapeById(shapeList, shapeId),
+        status: FILLABLE,
+      })
+    );
+  };
 
   const dropShape = (i, j, shapeId) => {
-    if(i == null || j == null || shapeId == null)
+    if (i == null || j == null || shapeId == null) return;
+
+    if (!isFillableOnBoard(board, i, j, getShapeById(shapeList, shapeId)))
       return;
 
-    if(!isFillableOnBoard(board, i, j, getShapeById(shapeList, shapeId)))
-      return;
+    dispatch(
+      fillBoardWithShape({
+        board: "main",
+        i,
+        j,
+        shape: getShapeById(shapeList, shapeId),
+        status: FILL,
+      })
+    );
 
-    dispatch(fillBoardWithShape({
-      board: 'main',
-      i,
-      j,
-      shape: getShapeById(shapeList, shapeId),
-      status: FILL
-    }));
-
-    dispatch(addScore({score: dropScore}));
+    dispatch(addScore({ score: dropScore }));
 
     var newShapeList = removeShapeFromShapeList(shapeList, shapeId);
-    if(newShapeList.length == 0)
-      var newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
+    if (newShapeList.length == 0)
+      newShapeList = createNewShapeListWithDetails(numShapesOnBoard);
     setShapeList(newShapeList);
-  }
+
+    if (isGameOver(board, newShapeList)) {
+      setGameOver(true);
+      return;
+    }
+  };
 
   useEffect(() => {
-    dispatch(setBoardView({
-      newBoard: board
-    }));
+    dispatch(
+      setBoardView({
+        newBoard: board,
+      })
+    );
 
     const scoreCalculator = new ScoreCalculator(board);
     const newScore = scoreCalculator.calcScore();
     const newBoard = scoreCalculator.getNewBoard();
 
-    dispatch(addScore({score: newScore}));
-    if(!isBoardEquals(board, newBoard))
-      dispatch(setBoard({newBoard: newBoard}));
+    dispatch(addScore({ score: newScore }));
+    if (!isBoardEquals(board, newBoard))
+      dispatch(setBoard({ newBoard: newBoard }));
   }, [board]);
 
   return (
-    <GameView
-      matrix={ boardView }
-      checkFillPossible={ handleFillBoardView }
-      shapeList={ shapeList }
-      notifyDrop={ dropShape } />
+    <>
+      {gameOver && <GameOver />}
+      <GameView
+        matrix={boardView}
+        checkFillPossible={handleFillBoardView}
+        shapeList={shapeList}
+        notifyDrop={dropShape}
+      />
+    </>
   );
 }
 
