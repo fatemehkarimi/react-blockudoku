@@ -65,7 +65,7 @@ function GameView({ matrix, shapeList, checkFillPossible, notifyDrop }) {
       monitor.subscribeToOffsetChange(() => {
         // throttling change events
         const now = new Date().getTime();
-        if (now - lastUpdatedPositionTime <= 250) {
+        if (now - lastUpdatedPositionTime <= 150) {
           return;
         }
         setLastUpdatedPositionTime(now);
